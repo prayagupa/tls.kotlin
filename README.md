@@ -29,6 +29,8 @@ you have his/her certificate loaded in your browser/application (a root Certific
 
 [Trust Store vs Key Store - creating with keytool](http://stackoverflow.com/a/6341566/432903)
 
+[Truststore and Keystore Definitions](http://stackoverflow.com/a/18912385/432903)
+
 ```
 Keystore contains private keys, and the certificates with their corresponding public keys.
 
