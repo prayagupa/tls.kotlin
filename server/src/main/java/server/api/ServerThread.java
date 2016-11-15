@@ -1,4 +1,4 @@
-package server;
+package server.api;
 
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
@@ -10,7 +10,7 @@ import java.io.*;
  */
 
 // Thread handling the socket from client
-class ServerThread extends Thread {
+public class ServerThread extends Thread {
 
     private SSLSocket sslSocket = null;
 
