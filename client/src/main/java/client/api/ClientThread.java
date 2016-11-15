@@ -1,4 +1,4 @@
-package client;
+package client.api;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -10,12 +10,14 @@ import java.security.KeyStore;
  */
 
 // Thread handling the socket to server
-class ClientThread extends Thread {
+public class ClientThread extends Thread {
 
     private SSLSocket sslSocket = null;
+    private String message = "";
 
-    ClientThread(SSLSocket sslSocket) {
+    ClientThread(SSLSocket sslSocket, String message) {
         this.sslSocket = sslSocket;
+        this.message = message;
     }
 
     public void run() {
@@ -37,7 +39,7 @@ class ClientThread extends Thread {
             OutputStream sendChannel = sslSocket.getOutputStream();
             PrintWriter httpRequestToSendChannel = new PrintWriter(new OutputStreamWriter(sendChannel));
             // Write data
-            httpRequestToSendChannel.println("client's love");
+            httpRequestToSendChannel.println(message);
             httpRequestToSendChannel.println();
             httpRequestToSendChannel.flush();
 
