@@ -1,6 +1,15 @@
 TLS server/ client communication
 -------------------------------
 
+[Trust Store vs Key Store - creating with keytool](http://stackoverflow.com/a/6341566/432903)
+
+```
+Essentially, the keystore in javax.net.ssl.keyStore is meant to contain your private keys and certificates, 
+
+whereas the javax.net.ssl.trustStore is meant to contain the CA certificates you're willing to trust when a remote party 
+presents its certificate.
+```
+
 ```bash
 prayagupd at prayagupd-vbox in /media/sf_programming/https-server-kotlin/src
 $ mkdir conf
