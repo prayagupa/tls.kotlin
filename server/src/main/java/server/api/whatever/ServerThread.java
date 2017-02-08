@@ -1,4 +1,4 @@
-package server.api;
+package server.api.whatever;
 
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
@@ -15,7 +15,7 @@ public class ServerThread extends Thread {
     private SSLSocket sslSocket = null;
 
 
-    ServerThread(SSLSocket sslSocket) {
+    public ServerThread(SSLSocket sslSocket) {
         this.sslSocket = sslSocket;
     }
 

@@ -1,4 +1,4 @@
-package client.api;
+package client.api.whatever;
 
 import javax.net.ssl.*;
 import java.io.*;

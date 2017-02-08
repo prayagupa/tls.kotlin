@@ -1,5 +1,7 @@
 package client.api
 
+import client.api.whatever.ClientThread
+import client.api.whatever.Keystore
 import javax.net.ssl.SSLSocket
 
 /**

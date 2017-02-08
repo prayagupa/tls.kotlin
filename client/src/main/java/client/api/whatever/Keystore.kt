@@ -1,4 +1,4 @@
-package client.api
+package client.api.whatever
 
 import java.io.FileInputStream
 import java.security.KeyStore
