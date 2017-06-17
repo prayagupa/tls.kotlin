@@ -1,7 +1,5 @@
 package server.api
 
-import server.api.HttpTlsServer
-
 /**
  * Created by prayagupd
  * on 11/15/16.
@@ -10,8 +8,12 @@ import server.api.HttpTlsServer
 object Server {
 
     @JvmStatic fun main(args: Array<String>) {
-        val server = HttpTlsServer(9999)
-        server.run()
+
+        val password = "eccount"
+        val keyStoreFile = "conf/eccountKeyStore.jks"
+
+        val server = HttpTlsServer(9999, password, keyStoreFile)
+        server.start()
     }
 
 }

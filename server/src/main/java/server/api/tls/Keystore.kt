@@ -1,4 +1,4 @@
-package server.api.whatever
+package server.api.tls
 
 import java.io.FileInputStream
 import java.security.KeyStore
@@ -15,26 +15,26 @@ class Keystore {
 
     companion object {
 
-        fun createTLSContext(): SSLContext? {
+        fun createTLSContext(keyStoreFile: String, password: String): SSLContext? {
             try {
-                val keyStore: KeyStore = KeyStore.getInstance("JKS")
-                keyStore.load(FileInputStream("conf/eccountKeyStore.jks"), "eccount".toCharArray())
+                val keyStoreLoader: KeyStore = KeyStore.getInstance("JKS")
+                keyStoreLoader.load(FileInputStream(keyStoreFile), password.toCharArray())
 
                 // Create key manager
                 val keyManagerFactory = KeyManagerFactory.getInstance("SunX509")
-                keyManagerFactory.init(keyStore, "eccount".toCharArray())
+                keyManagerFactory.init(keyStoreLoader, password.toCharArray())
                 val km = keyManagerFactory.keyManagers
 
                 // Create trust manager
                 val trustManagerFactory = TrustManagerFactory.getInstance("SunX509")
-                trustManagerFactory.init(keyStore)
+                trustManagerFactory.init(keyStoreLoader)
                 val tm = trustManagerFactory.trustManagers
 
-                // Initialize SSLContext
-                val sslContext = SSLContext.getInstance("TLSv1")
-                sslContext.init(km, tm, null)
+                // Initialize TLSContext
+                val tlSecurityContext = SSLContext.getInstance("TLSv1")
+                tlSecurityContext.init(km, tm, null)
 
-                return sslContext
+                return tlSecurityContext
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
