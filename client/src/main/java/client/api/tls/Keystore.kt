@@ -1,4 +1,4 @@
-package client.api.whatever
+package client.api.tls
 
 import java.io.FileInputStream
 import java.security.KeyStore
@@ -12,14 +12,15 @@ import javax.net.ssl.TrustManagerFactory
  */
 
 object Keystore {
-    fun createTLSContext(): SSLContext? {
+
+    fun createTLSContext(keyStoreFile: String, password: String): SSLContext? {
         try {
             val keyStore = KeyStore.getInstance("JKS")
-            keyStore.load(FileInputStream("conf/eccountKeyStore.jks"), "eccount".toCharArray())
+            keyStore.load(FileInputStream(keyStoreFile), password.toCharArray())
 
             // Create key manager
             val keyManagerFactory = KeyManagerFactory.getInstance("SunX509")
-            keyManagerFactory.init(keyStore, "eccount".toCharArray())
+            keyManagerFactory.init(keyStore, password.toCharArray())
             val km = keyManagerFactory.keyManagers
 
             // Create trust manager

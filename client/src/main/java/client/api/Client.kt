@@ -8,8 +8,13 @@ package client.api
 object Client {
 
     @JvmStatic fun main(args: Array<String>) {
-        val client = HttpTlsClient("127.0.0.1", 9999)
+
+        val keyStoreFile = "conf/eccountKeyStore.jks"
+        val password = "eccount"
+
+        val client = HttpTlsClient("127.0.0.1", 9999, keyStoreFile, password)
+
         client.message = "client sends love"
-        client.run()
+        client.start()
     }
 }

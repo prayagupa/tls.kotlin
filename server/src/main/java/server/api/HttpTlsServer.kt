@@ -21,7 +21,7 @@ class HttpTlsServer(private val port: Int, private val password: String, val key
             val tlsSecuredServerSocketFactory = tlSecurityContext!!.serverSocketFactory
             val tlSecuredServerSocket = tlsSecuredServerSocketFactory.createServerSocket(this.port) as SSLServerSocket
 
-            println("TLS server started!!!")
+            println("[INFO] HttpTlsServer TLSv1 server started!!!")
 
             while (!stopListeningOnSecuredSocket.get()) {
                 //handshake per connection
@@ -31,7 +31,6 @@ class HttpTlsServer(private val port: Int, private val password: String, val key
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-
     }
 
     fun stop() {

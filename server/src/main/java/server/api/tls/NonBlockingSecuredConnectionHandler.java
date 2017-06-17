@@ -28,7 +28,7 @@ public class NonBlockingSecuredConnectionHandler extends Thread {
             // Get session after the connection is established
             SSLSession tlsSession = securedSocket.getSession();
 
-            System.out.println("SSLSession :");
+            System.out.println("[INFO] NonBlockingSecuredConnectionHandler TLSSession :");
             System.out.println("\tProtocol : " + tlsSession.getProtocol());
             System.out.println("\tCipher suite : " + tlsSession.getCipherSuite());
 
@@ -41,11 +41,10 @@ public class NonBlockingSecuredConnectionHandler extends Thread {
 
             String line = null;
             while ((line = receivingBuffer.readLine()) != null) {
-                System.out.println("Server consumes : " + line);
-
                 if (line.trim().isEmpty()) {
                     break;
                 }
+                System.out.println("[INFO] NonBlockingSecuredConnectionHandler Server consumes : " + line);
             }
 
             // Write data to sending response
