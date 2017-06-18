@@ -492,3 +492,13 @@ Caused by: java.io.EOFException: SSL peer shut down incorrectly
 	... 4 more
 
 ```
+
+
+Run server socket
+-----------------
+
+```
+gradle compileKotlin
+
+gradle compileKotlin run
+```

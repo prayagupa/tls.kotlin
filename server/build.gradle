@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '0.10.195'
+    ext.kotlin_version = '1.1.2-2'
 
     repositories {
         mavenCentral()
@@ -9,3 +9,21 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
+apply plugin: 'application'
+apply plugin: 'kotlin'
+
+//sourceSets {
+//    main.kotlin.srcDirs += 'src/main/kotlin'
+//    main.java.srcDirs += 'src/main/java'
+//}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+mainClassName = "server.api.Server"
