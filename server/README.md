@@ -1,5 +1,5 @@
-create keystore with public/private keys
-------------------------------------------
+create KS(keystore) with public/private keys
+--------------------------------------------
 
 1) example to create PP KeyStore
 
@@ -30,7 +30,7 @@ Enter key password for <eccount>
 
 ```
 $ keytool -list -keystore conf/eccountKeyStore.jks 
-Enter keystore password:  
+Enter keystore password:  eccount
 
 Keystore type: JKS
 Keystore provider: SUN
@@ -41,10 +41,66 @@ eccount, Nov 14, 2016, PrivateKeyEntry,
 Certificate fingerprint (SHA1): E5:2E:B2:C5:17:DA:08:D4:1B:97:C4:33:E1:9B:3B:08:24:69:31:0D
 ```
 
-create PublicKeyCS(PKCS12)
---------------------------
+What is [`PrivateKeyEntry`](https://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.PrivateKeyEntry.html)?
+_A KeyStore entry that holds a PrivateKey and corresponding certificate chain._
 
-so that client of this server can handshake with it.
+verbose mode
+
+```bash
+keytool -v -list -keystore conf/eccountKeyStore.jks 
+Enter keystore password: eccount 
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+Alias name: eccount
+Creation date: Nov 14, 2016
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Prayag, OU=dvnhlsm, O=dvnhlsm, L=SEA, ST=WA, C=US
+Issuer: CN=Prayag, OU=dvnhlsm, O=dvnhlsm, L=SEA, ST=WA, C=US
+Serial number: 3240caeb
+Valid from: Mon Nov 14 20:13:33 PST 2016 until: Sun Feb 12 20:13:33 PST 2017
+Certificate fingerprints:
+	 MD5:  27:4A:27:09:19:B9:0D:0D:FF:3A:28:94:58:71:BA:6F
+	 SHA1: E5:2E:B2:C5:17:DA:08:D4:1B:97:C4:33:E1:9B:3B:08:24:69:31:0D
+	 SHA256: 61:D0:FF:1F:68:7A:1B:3C:F1:DD:78:EC:7B:E0:6C:64:40:B9:4C:35:CE:E0:61:D4:24:08:F8:81:36:DE:2A:1E
+	 Signature algorithm name: SHA256withRSA
+	 Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: D9 47 69 84 00 75 FD 88   13 B6 2C 1E 8A EA 69 4B  .Gi..u....,...iK
+0010: 1A 4C C6 6D                                        .L.m
+]
+]
+
+
+
+*******************************************
+*******************************************
+
+```
+
+<h4>create [PublicKeyCS(PKCS12)](https://en.wikipedia.org/wiki/PKCS_12)</h4>
+
+- I can't share the keystore between client and server, because the keystore contains the private key. 
+- When authenticating, the client skips the certificates with private keys. 
+- I need to deploy a truststore on client side, so that client can handshake with server.
+
+- When I export a certificate(from KeyStore), I only export its public key, and an optional reference to its issuer.
+- PKCS12(`*.p12`) is a password protected container containing keys and certificates (just like Java's keystore). 
+  However, it's not compatible with Java<6
+- PKCS12 is commonly used to bundle a private key with its [X.509 certificate](https://developer.couchbase.com/documentation/server/current/security/security-x509certsintro.html) or to bundle all the members of a chain of trust.
+
+Creating JKS and exporting PKCS12, PEMail
+-----------------------------------------
 
 ```
 keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=prayagupd,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US'       
@@ -61,8 +117,8 @@ openssl x509 -text -in conf/restapi.pem
 openssl dsa -text -in conf/restapi.pem
 ```
 
-desc
-----
+PKCS12(equivalent to Java Keystore) creation in detail
+------------------------------------------------------
 
 ```
 keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=prayagupd,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US'
@@ -157,6 +213,8 @@ SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 -----END CERTIFICATE-----
 ```
 
+export to type pkcs12
+
 ```
 $ keytool -importkeystore -srckeystore conf/restapi.jks \
 →        -destkeystore conf/restapi.p12 \
@@ -176,6 +234,7 @@ total 24
 18952427 -rw-r--r--  1 as18  NORD\Domain Users  1614 Jun 17 05:20 restapi.p12
 ```
 
+export to PEMail
 
 ```
 $ openssl pkcs12 -in conf/restapi.p12 -out conf/restapi.pem
@@ -338,6 +397,7 @@ restapi, Jun 17, 2017, PrivateKeyEntry,
 Certificate fingerprint (SHA1): BA:8C:3F:16:20:FF:C8:BF:EC:C2:7A:8E:DA:77:4C:2C:8E:56:F4:60
 ```
 
+[create a trusted self signed certificate](https://stackoverflow.com/a/17764629/432903)
 
 Sending requests
 ----------------

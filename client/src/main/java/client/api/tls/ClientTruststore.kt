@@ -11,12 +11,12 @@ import javax.net.ssl.TrustManagerFactory
  * on 11/15/16.
  */
 
-object Keystore {
+object ClientTruststore {
 
-    fun createTLSContext(keyStoreFile: String, password: String): SSLContext? {
+    fun createTLSContext(trustStoreFile: String, password: String): SSLContext? {
         try {
             val keyStore = KeyStore.getInstance("JKS")
-            keyStore.load(FileInputStream(keyStoreFile), password.toCharArray())
+            keyStore.load(FileInputStream(trustStoreFile), password.toCharArray())
 
             // Create key manager
             val keyManagerFactory = KeyManagerFactory.getInstance("SunX509")

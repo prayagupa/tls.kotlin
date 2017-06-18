@@ -1,21 +1,21 @@
 create truststore
 -----------------
 
-https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail
+[Privacy Enhanced EMail](https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail)
 
 ```
 PEMail is a de facto file format for storing and sending cryptography keys, 
 certificates, and other data, based on a set of 1993 IETF standards defining "privacy-enhanced mail."
 ```
 
-```
+```bash
 $ keytool -printcert -file conf/restapi.pem 
 keytool error: java.lang.Exception: Failed to parse input
 ```
 
 A PEMail-encoded certificate:
 
-```
+```bash
 $ openssl x509 -in conf/restapi.pem -text
 Certificate:
     Data:
@@ -92,17 +92,32 @@ SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 ```
 
 
-https://en.wikipedia.org/wiki/X.509
+[X.509 standard](https://en.wikipedia.org/wiki/X.509)
 
 ```
 In cryptography, X.509 is a standard that defines the format of public key certificates.
+
+The structure foreseen by the standards is expressed in a formal language, Abstract Syntax Notation One (ASN.1).
 ```
 
-
-import into JKS
----------------
+[Abstract Syntax Notation.1/ ASNotation.1](https://en.wikipedia.org/wiki/Abstract_Syntax_Notation_One)
 
 ```
+an interface description language for defining data structures that can be serialized and deserialized 
+in a standard, cross-platform way. It's broadly used in telecommunications and computer networking, 
+and especially in cryptography.
+```
+
+[Digital Signature Algorithm](https://en.wikipedia.org/wiki/Digital_Signature_Algorithm)
+
+```
+a Federal Information Processing Standard for digital signatures.
+```
+
+import PEMail into JKS
+----------------------
+
+```bash
 openssl x509 -outform der -in conf/restapi.pem -out conf/restapi.der
 keytool -import -alias restapi -keystore conf/restapi.jks -file conf/restapi.der
 ```
@@ -137,6 +152,8 @@ KeyIdentifier [
 Trust this certificate? [no]:  yes
 Certificate was added to keystore
 ```
-```
+
+
+```bash
 keytool -import -alias ca -file /usr/local/jdk1.8/jre/lib/security/nihilism_ca_denver.cer -keystore nihilism_truststore -storepass storepa$$
 ```
