@@ -9,40 +9,34 @@ import javax.net.ssl.SSLSocket
  */
 
 // Thread handling the socket from client
-class NonBlockingSecuredConnectionHandler(securedSocketCons: SSLSocket) : Thread() {
-
-    private var securedSocket: SSLSocket? = null
-
-    init {
-        this.securedSocket = securedSocketCons
-    }
+class NonBlockingSecuredConnectionHandler(var securedSocket: SSLSocket) : Thread() {
 
     override fun run() {
-        val supportedCipherSuites = securedSocket!!.supportedCipherSuites
+        val supportedCipherSuites = securedSocket.supportedCipherSuites
 
-        securedSocket!!.enabledCipherSuites = supportedCipherSuites
+        securedSocket.enabledCipherSuites = supportedCipherSuites
 
         try {
             // Start handshake
-            securedSocket?.startHandshake()
+            securedSocket.startHandshake()
 
             // Get session after the connection is established
-            val tlsSession = securedSocket?.session
+            val tlsSession = securedSocket.session
 
             println("[INFO] NonBlockingSecuredConnectionHandler TLSSession :")
             println("\tProtocol : " + tlsSession?.protocol)
             println("\tCipher suite : " + tlsSession?.cipherSuite)
 
             // Start handling application content
-            val receivingStream = securedSocket?.inputStream
-            val sendStream = securedSocket?.outputStream
+            val receivingStream = securedSocket.inputStream
+            val sendStream = securedSocket.outputStream
 
             val receivingBuffer = BufferedReader(InputStreamReader(receivingStream))
             val response = PrintWriter(OutputStreamWriter(sendStream))
 
             var line = receivingBuffer.readLine()
             while (line!= null) {
-                if (line!!.trim { it <= ' ' }.isEmpty()) {
+                if (line.trim { it <= ' ' }.isEmpty()) {
                     break
                 }
                 println("[INFO] NonBlockingSecuredConnectionHandler Server consumes : " + line)
@@ -53,7 +47,7 @@ class NonBlockingSecuredConnectionHandler(securedSocketCons: SSLSocket) : Thread
             response.print("HTTP/1.1 200\r\n")
             response.flush()
 
-            securedSocket?.close()
+            securedSocket.close()
         } catch (ex: Exception) {
             ex.printStackTrace()
             val printWriter = PrintWriter(StringWriter())

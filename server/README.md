@@ -493,6 +493,7 @@ Caused by: java.io.EOFException: SSL peer shut down incorrectly
 
 ```
 
+https://en.wikipedia.org/wiki/Cipher_suite
 
 Run server socket
 -----------------
