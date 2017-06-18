@@ -157,3 +157,23 @@ Certificate was added to keystore
 ```bash
 keytool -import -alias ca -file /usr/local/jdk1.8/jre/lib/security/nihilism_ca_denver.cer -keystore nihilism_truststore -storepass storepa$$
 ```
+
+
+Run client connection
+---------------------
+
+```bash
+$ /usr/local/gradle-4.0/bin/gradle run
+Starting a Gradle Daemon, 1 busy Daemon could not be reused, use --status for details
+
+> Task :run
+[INFO] HttpTlsClient TLSv1 client started
+[INFO] ClientConnectionThread SSLSession :
+        Protocol : TLSv1
+        Cipher suite : TLS_DHE_DSS_WITH_AES_128_CBC_SHA
+[INFO] ClientConnectionThread received : HTTP/1.1 200
+
+
+BUILD SUCCESSFUL in 4s
+4 actionable tasks: 3 executed, 1 up-to-date
+```
