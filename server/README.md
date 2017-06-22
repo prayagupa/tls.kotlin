@@ -88,7 +88,7 @@ KeyIdentifier [
 
 ```
 
-<h4>create [PublicKeyCS(PKCS12)](https://en.wikipedia.org/wiki/PKCS_12)</h4>
+<h4>create [PublicKeyCS - PKCS12](https://en.wikipedia.org/wiki/PKCS_12)</h4>
 
 - I can't share the keystore between client and server, because the keystore contains the private key. 
 - When authenticating, the client skips the certificates with private keys. 
@@ -99,21 +99,29 @@ KeyIdentifier [
   However, it's not compatible with Java<6
 - PKCS12 is commonly used to bundle a private key with its [X.509 certificate](https://developer.couchbase.com/documentation/server/current/security/security-x509certsintro.html) or to bundle all the members of a chain of trust.
 
-Creating JKS and exporting PKCS12, PEMail
------------------------------------------
+Creating JKS and exporting PKCS12, [PEMail](https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail)
+---------------------------------------------
 
 ```
+#1
 keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=prayagupd,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US'       
 
+#2
 keytool -keystore conf/restapi.jks -exportcert -alias restapi | openssl x509 -inform der -text
 
+#3
 keytool -importkeystore -srckeystore conf/restapi.jks \
        -destkeystore conf/restapi.p12 \
        -srcstoretype jks \
        -deststoretype pkcs12
-       
+
+#4
 openssl pkcs12 -in conf/restapi.p12 -out conf/restapi.pem
+
+#5
 openssl x509 -text -in conf/restapi.pem
+
+#6
 openssl dsa -text -in conf/restapi.pem
 ```
 
@@ -121,19 +129,15 @@ PKCS12(equivalent to Java Keystore) creation in detail
 ------------------------------------------------------
 
 ```
-keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=prayagupd,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US'
+keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=*.prayagupd.com,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US'
 Enter keystore password:  restapi-password
 Re-enter new password: restapi-password
 Enter key password for <restapi>
 	(RETURN if same as keystore password): 
 	
-keytool -keystore conf/restapi.jks -exportcert -alias restapi | openssl x509 -inform der -text
-
-keytool -importkeystore -srckeystore conf/eccountKeyStore.jks \
-       -destkeystore eccount-cert.p12 \
-       -srcstoretype jks \
-       -deststoretype pkcs12
 ```
+
+openssl x509
 
 ```
 keytool -keystore conf/restapi.jks -exportcert -alias restapi | openssl x509 -inform der -text
@@ -213,7 +217,7 @@ SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 -----END CERTIFICATE-----
 ```
 
-export to type pkcs12
+export to deststoretype pkcs12
 
 ```
 $ keytool -importkeystore -srckeystore conf/restapi.jks \
@@ -234,7 +238,7 @@ total 24
 18952427 -rw-r--r--  1 as18  NORD\Domain Users  1614 Jun 17 05:20 restapi.p12
 ```
 
-export to PEMail
+export to PEMail using `openssl pkcs12`
 
 ```
 $ openssl pkcs12 -in conf/restapi.p12 -out conf/restapi.pem
@@ -250,6 +254,57 @@ ll conf/
 18952427 -rw-r--r--  1 as18  NORD\Domain Users  1614 Jun 17 05:20 restapi.p12
 18952651 -rw-r--r--  1 as18  NORD\Domain Users  2278 Jun 17 05:25 restapi.pem
 ```
+
+In below, `-----BEGIN CERTIFICATE-----` is PrivacyEMail
+
+```
+$ cat conf/restapi.pem 
+Bag Attributes
+    friendlyName: restapi
+    localKeyID: 54 69 6D 65 20 31 34 39 37 37 30 32 30 35 37 31 35 38 
+Key Attributes: <No Attributes>
+-----BEGIN DSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,FF42FDE8F461369E
+
+kNlFipy8ujtGpZoh5+M1m+4TXRGMDeu+xq0WqvUlxImck5wr5FZ4XCEQN2nj1v1b
+BVFuyZ/8lzwzuafrWq10Gzw2/HbsV1QPiBgn8QapHr8L7fdXaqXeiCB7Gql5wwMd
+tO3NQSizExW4a/3SHyJyGXTTkUcvuz6QbB1B1h41FSGtkWZRFxiABMW8G+Ab2F3D
+ewxTC9lwkPSnO3QgzMw8sbEqKsDUf58JBlOFC8V2w/mRse+j9X0M9+CpIOyTLlv/
+VlauZ+D7ERhBcKW+d5RpYfpt5j4im4DQyt1itbFc2O88NPlzdmP/HMqpGbABXzXx
+UjQwBwcaYuYC+yBxfSKXrH8SKOWUWuCG0AdF4smCa0UPT1/W6acL93YXXr8JdCJV
+Zf5aPctjhn5vyxEuIznZJ1V7QpK9adpxrgOZt4/xk1OTAlSx1cH3nO8pyeex61RO
+Iir2FuJoE7ZVe87ZwNNJpUQMQwrG8t2uq3VPqAV9C/N8ndS1DOnr/ZGvfsA8LW5b
+hJHQPwuE55zqNjIpnrznLHsb8BiT+Mnn9bSflwRaKTmVnrvAnPhf29LVKXT351tr
+LGfR+y9qKbzMO7H86euf2CZH7QkX5od+
+-----END DSA PRIVATE KEY-----
+Bag Attributes
+    friendlyName: restapi
+    localKeyID: 54 69 6D 65 20 31 34 39 37 37 30 32 30 35 37 31 35 38 
+subject=/C=US/ST=WA/L=SEA/OU=dvnhlsm/O=com.restapi/CN=prayagupd
+issuer=/C=US/ST=WA/L=SEA/OU=dvnhlsm/O=com.restapi/CN=prayagupd
+-----BEGIN CERTIFICATE-----
+MIIDJTCCAuOgAwIBAgIEXeQNlzALBgcqhkjOOAQDBQAwZDELMAkGA1UEBhMCVVMx
+CzAJBgNVBAgTAldBMQwwCgYDVQQHEwNTRUExEDAOBgNVBAsTB2R2bmhsc20xFDAS
+BgNVBAoTC2NvbS5yZXN0YXBpMRIwEAYDVQQDEwlwcmF5YWd1cGQwHhcNMTcwNjE3
+MTIxMzQ2WhcNMTcwOTE1MTIxMzQ2WjBkMQswCQYDVQQGEwJVUzELMAkGA1UECBMC
+V0ExDDAKBgNVBAcTA1NFQTEQMA4GA1UECxMHZHZuaGxzbTEUMBIGA1UEChMLY29t
+LnJlc3RhcGkxEjAQBgNVBAMTCXByYXlhZ3VwZDCCAbgwggEsBgcqhkjOOAQBMIIB
+HwKBgQD9f1OBHXUSKVLfSpwu7OTn9hG3UjzvRADDHj+AtlEmaUVdQCJR+1k9jVj6
+v8X1ujD2y5tVbNeBO4AdNG/yZmC3a5lQpaSfn+gEexAiwk+7qdf+t8Yb+DtX58ao
+phUPBPuD9tPFHsMCNVQTWhaRMvZ1864rYdcq7/IiAxmd0UgBxwIVAJdgUI8VIwvM
+spK5gqLrhAvwWBz1AoGBAPfhoIXWmz3ey7yrXDa4V7l5lK+7+jrqgvlXTAs9B4Jn
+UVlXjrrUWU/mcQcQgYC0SRZxI+hMKBYTt88JMozIpuE8FnqLVHyNKOCjrh4rs6Z1
+kW6jfwv6ITVi8ftiegEkO8yk8b6oUZCJqIPf4VrlnwaSi2ZegHtVJWQBTDv+z0kq
+A4GFAAKBgQDDSPAaVEUvZBMCow4nzjVcbCxYthIoiSRpynslKGw+rXWm/BtqGK+w
+YeyClED51rnYRjUlcRmyat3CykxVSBTS7hwXlrIMmSBO9oVZngE80K7W6zznGMt+
+wStefxVhw7pzXfIppzuGn2rKQ3ODLqmuA3zZhFZmAdvVl+pT+c1VwaMhMB8wHQYD
+VR0OBBYEFGBdxYTFVqSziq+Kc8nVRhrnqo/4MAsGByqGSM44BAMFAAMvADAsAhR8
+SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
+-----END CERTIFICATE-----
+```
+
+`openssl x509`
 
 ```
 $ openssl x509 -text -in conf/restapi.pem
@@ -326,6 +381,8 @@ VR0OBBYEFGBdxYTFVqSziq+Kc8nVRhrnqo/4MAsGByqGSM44BAMFAAMvADAsAhR8
 SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 -----END CERTIFICATE-----
 ```
+
+`openssl dsa`
 
 ```
 $ openssl dsa -text -in conf/restapi.pem
