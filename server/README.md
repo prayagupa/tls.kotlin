@@ -1,7 +1,7 @@
 create KS(keystore) with public/private keys
 --------------------------------------------
 
-1) example to create PP KeyStore
+1) example to create PP KeyStore (using keytool)
 
 ```bash
 $ mkdir conf
@@ -27,6 +27,11 @@ Is CN=Prayag, OU=dvnhlsm, O=dvnhlsm, L=SEA, ST=WA, C=US correct?
 Enter key password for <eccount>
 	(RETURN if same as keystore password): 
 ```
+
+[RSA](https://en.wikipedia.org/wiki/RSA_(cryptosystem)) : 
+
+A user of RSA creates and then publishes a public key based on two large prime numbers, 
+along with an auxiliary value. The prime numbers must be kept secret.
 
 ```
 $ keytool -list -keystore conf/eccountKeyStore.jks 
@@ -99,12 +104,17 @@ KeyIdentifier [
   However, it's not compatible with Java<6
 - PKCS12 is commonly used to bundle a private key with its [X.509 certificate](https://developer.couchbase.com/documentation/server/current/security/security-x509certsintro.html) or to bundle all the members of a chain of trust.
 
+[what is x509?](https://en.wikipedia.org/wiki/X.509)
+---------------
+
+a standard that defines the format of public key certificates.
+
 Creating JKS and exporting PKCS12, [PEMail](https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail)
 ---------------------------------------------
 
 ```
 #1
-keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=prayagupd,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US'       
+keytool -keystore conf/restapi.jks -genkeypair -alias restapi -dname 'CN=prayagupd,O=com.restapi,OU=dvnhlsm,L=SEA,ST=WA,C=US' 
 
 #2
 keytool -keystore conf/restapi.jks -exportcert -alias restapi | openssl x509 -inform der -text
@@ -137,11 +147,11 @@ Enter key password for <restapi>
 	
 ```
 
-openssl x509
+**openssl x509**
 
 ```
 keytool -keystore conf/restapi.jks -exportcert -alias restapi | openssl x509 -inform der -text
- 
+
 Enter keystore password:  restapi-password
 Certificate:
     Data:
@@ -217,7 +227,7 @@ SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 -----END CERTIFICATE-----
 ```
 
-export to deststoretype pkcs12
+*export to deststoretype pkcs12*
 
 ```
 $ keytool -importkeystore -srckeystore conf/restapi.jks \
@@ -238,7 +248,7 @@ total 24
 18952427 -rw-r--r--  1 as18  NORD\Domain Users  1614 Jun 17 05:20 restapi.p12
 ```
 
-export to PEMail using `openssl pkcs12`
+*export to PEMail using `openssl pkcs12`*
 
 ```
 $ openssl pkcs12 -in conf/restapi.p12 -out conf/restapi.pem
@@ -304,7 +314,7 @@ SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 -----END CERTIFICATE-----
 ```
 
-`openssl x509`
+*`openssl x509`*
 
 ```
 $ openssl x509 -text -in conf/restapi.pem
@@ -474,7 +484,7 @@ $ curl -v -XGET localhost:9999
 
 * Connection #0 to host localhost left intact
 
-// throws
+// Server throws
 
 javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?
 	at sun.security.ssl.InputRecord.handleUnknownRecord(InputRecord.java:710)
@@ -510,7 +520,7 @@ If you'd like to turn off curl's verification of the certificate, use
  the -k (or --insecure) option.
 
 
-//application error
+//socket endpoint error
 
 javax.net.ssl.SSLHandshakeException: Received fatal alert: certificate_unknown
 	at sun.security.ssl.Alerts.getSSLException(Alerts.java:192)
@@ -560,3 +570,5 @@ gradle compileKotlin
 
 gradle compileKotlin run
 ```
+
+http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl.html

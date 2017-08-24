@@ -27,7 +27,7 @@ How does client know that it is dealing with the right person or rather the righ
 ---------------------------------------------------------------------------------------------
 
 This right person/web server, client has to implicitly trust: 
-client has his/SERVER's certificate loaded in its browser/application (a root Certificate). 
+client has his/SERVER's certificate loaded in its application/brower (a root Certificate). 
 
 
 [Trust Store vs Key Store - creating with keytool](http://stackoverflow.com/a/6341566/432903)
@@ -37,7 +37,7 @@ client has his/SERVER's certificate loaded in its browser/application (a root Ce
 ```
 Keystore contains private keys, and the certificates with their corresponding public keys.
 
-Essentially, javax.net.ssl.keyStore is meant to contain your private keys and certificates, 
+Essentially, javax.net.ssl.keyStore is meant to contain your private keys and certificates
 ```
 
 
@@ -54,6 +54,8 @@ create a keystore -
 
 refs
 -----
+
+http://www.backup4all.com/kb/what-is-a-public-private-key-pair-401.html
 
 https://en.wikipedia.org/wiki/Transport_Layer_Security#Certificate_authorities
 
