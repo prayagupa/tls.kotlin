@@ -14,9 +14,11 @@ object Client {
         val clientTrustStoreFile = "conf/restapi.jks"
         val clientPassword = "restapi-pass"
 
-        val client = HttpTlsClient("127.0.0.1", 2810, clientTrustStoreFile, clientPassword)
+        val client = HttpTlsClient("127.0.0.1", 2810, clientTrustStoreFile, "JKS", clientPassword,
+                "TLSv1")
 
-        client.message = "client sends love at ${Date().time}"
+        client.mMessage = "client sends love at ${Date().time}" //TODO bad design
+
         client.start()
     }
 }
