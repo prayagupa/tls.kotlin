@@ -9,10 +9,10 @@ object Server {
 
     @JvmStatic fun main(args: Array<String>) {
 
-        val keyStoreFile = "conf/restapi.jks"
-        val password = "restapi-password"
+        val cert = "conf/restapi.jks"
+        val certPassword = "restapi-password"
 
-        val server = HttpTlsServer(2810, password, keyStoreFile)
+        val server = HttpTlsServer(2810, cert, certPassword,"JKS", "TLSv1")
         server.start()
     }
 
