@@ -159,6 +159,51 @@ keytool -import -alias ca -file /usr/local/jdk1.8/jre/lib/security/nihilism_ca_d
 ```
 
 
+TODO
+----
+
+hanshake using `restapi-client.p12:client` at conf3
+
+error
+
+```bash
+javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: No trusted certificate found
+	at sun.security.ssl.Alerts.getSSLException(Alerts.java:192)
+	at sun.security.ssl.SSLSocketImpl.fatal(SSLSocketImpl.java:1949)
+	at sun.security.ssl.Handshaker.fatalSE(Handshaker.java:302)
+	at sun.security.ssl.Handshaker.fatalSE(Handshaker.java:296)
+	at sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1509)
+	at sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:216)
+	at sun.security.ssl.Handshaker.processLoop(Handshaker.java:979)
+	at sun.security.ssl.Handshaker.process_record(Handshaker.java:914)
+	at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1062)
+	at sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1375)
+	at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1403)
+	at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1387)
+	at client.api.ClientConnectionThread.run(HttTlsClient.kt:44)
+Caused by: sun.security.validator.ValidatorException: No trusted certificate found
+	at sun.security.validator.SimpleValidator.buildTrustedChain(SimpleValidator.java:394)
+	at sun.security.validator.SimpleValidator.engineValidate(SimpleValidator.java:133)
+	at sun.security.validator.Validator.validate(Validator.java:260)
+	at sun.security.ssl.X509TrustManagerImpl.validate(X509TrustManagerImpl.java:324)
+	at sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:229)
+	at sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:124)
+	at sun.security.ssl.ClientHandshaker.serverCertificate(ClientHandshaker.java:1491)
+	... 8 more
+
+```
+
+
+probably root cert (public key) needs to be installed in machine, but not working in mac
+
+It does show up as localhost in `Keychain Access` UI.
+
+```
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain root-ca.pem
+
+
+```
+
 Run client connection
 ---------------------
 
