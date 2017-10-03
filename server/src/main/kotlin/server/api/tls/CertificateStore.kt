@@ -11,13 +11,13 @@ import javax.net.ssl.TrustManagerFactory
  * on 11/14/16.
  */
 
-class Keystore {
+class CertificateStore {
 
     companion object {
 
-        fun createTLSContext(keyStoreFile: String, password: String): SSLContext? {
+        fun createTLSContext(keyStoreFile: String, keystoreType: String, password: String, tlsVersion: String): SSLContext? {
             try {
-                val keyStoreLoader: KeyStore = KeyStore.getInstance("JKS")
+                val keyStoreLoader: KeyStore = KeyStore.getInstance(keystoreType)
                 keyStoreLoader.load(FileInputStream(keyStoreFile), password.toCharArray())
 
                 // Create key manager
@@ -31,7 +31,7 @@ class Keystore {
                 val tm = trustManagerFactory.trustManagers
 
                 // Initialize TLSContext
-                val tlSecurityContext = SSLContext.getInstance("TLSv1")
+                val tlSecurityContext = SSLContext.getInstance(tlsVersion)
                 tlSecurityContext.init(km, tm, null)
 
                 return tlSecurityContext

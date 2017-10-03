@@ -11,12 +11,14 @@ object Client {
 
     @JvmStatic fun main(args: Array<String>) {
 
-        val clientTrustStoreFile = "conf/restapi.jks"
-        val clientPassword = "restapi-pass"
+        val clientTrustStoreFile = "../server/conf3/restapi-server.p12"
+        val clientPassword = "server"
 
-        val client = HttpTlsClient("127.0.0.1", 2810, clientTrustStoreFile, clientPassword)
+        val client = HttpTlsClient("127.0.0.1", 2810, clientTrustStoreFile, "pkcs12", clientPassword,
+                "TLSv1")
 
-        client.message = "client sends love at ${Date().time}"
+        client.mMessage = "client sends love at ${Date().time}" //TODO bad design
+
         client.start()
     }
 }

@@ -13,9 +13,9 @@ import javax.net.ssl.TrustManagerFactory
 
 object ClientTruststore {
 
-    fun createTLSContext(trustStoreFile: String, password: String): SSLContext? {
+    fun createTLSContext(trustStoreFile: String, trustStoreType: String, password: String, tlsVersion: String): SSLContext? {
         try {
-            val keyStore = KeyStore.getInstance("JKS")
+            val keyStore = KeyStore.getInstance(trustStoreType)
             keyStore.load(FileInputStream(trustStoreFile), password.toCharArray())
 
             // Create key manager
@@ -29,7 +29,7 @@ object ClientTruststore {
             val tm = trustManagerFactory.trustManagers
 
             // Initialize SSLContext
-            val sslContext = SSLContext.getInstance("TLSv1")
+            val sslContext = SSLContext.getInstance(tlsVersion)
             sslContext.init(km, tm, null)
 
             return sslContext
