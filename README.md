@@ -1,14 +1,14 @@
 TLS server-client communication using Public/Private Key
 --------------------------------------------------------
 
-```
-client loaded with Server Certificates            |          Server
---------------------------------------------------|------------------------------------
-Message --> [Public Key]-->Encrypted Message------|----->  [Private Key]-->Message
-                 |                                |             |
-                 |                                |             |
-                 V                                |             V
-             TrustStore                           |          Keystore
+```bash
+client loaded with Server Certificates                        |          Server
+--------------------------------------------------------------|-------------------------------------------
+Message --> [Public Key]-->[Symm key, Encrypted Message]------|----->  [Private Key]-->[Symm key, Enc Message] -> Decrypted Message
+                 |                                            |             |
+                 |                                            |             |
+                 V                                            |             V
+             TrustStore                                       |          Keystore
 
 ```
 
@@ -23,7 +23,7 @@ Anybody can send an encrypted message to the SERVER, that only SERVER will be ab
 ![](https://docs.oracle.com/cd/E19509-01/820-3503/images/encryption-and-decryption.gif)
 
 
-How does client know that it is dealing with the right person or rather the right web server. 
+[How does client know that it is dealing with the right person](http://tldp.org/HOWTO/SSL-Certificates-HOWTO/x64.html) or rather the right web server. 
 ---------------------------------------------------------------------------------------------
 
 This right person/web server, client has to implicitly trust: 
