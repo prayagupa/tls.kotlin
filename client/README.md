@@ -97,7 +97,8 @@ SftkKXxIFvZYmBJxVZP5+3RIAQIUJhDcpqLgFX2HPpa3WIcbg5ahRuU=
 ```
 In cryptography, X.509 is a standard that defines the format of public key certificates.
 
-The structure foreseen by the standards is expressed in a formal language, Abstract Syntax Notation One (ASN.1).
+The structure foreseen by the standards is expressed in a formal language, 
+Abstract Syntax Notation One (ASN.1).
 ```
 
 [Abstract Syntax Notation.1/ ASNotation.1](https://en.wikipedia.org/wiki/Abstract_Syntax_Notation_One)

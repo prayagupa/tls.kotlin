@@ -2,18 +2,20 @@ TLS server-client communication using Public/Private Key
 --------------------------------------------------------
 
 ```
-client loaded with Server Certificates            |          Server
---------------------------------------------------|------------------------------------
-Message --> [Public Key]-->Encrypted Message------|----->  [Private Key]-->Message
-                 |                                |             |
-                 |                                |             |
-                 V                                |             V
-             TrustStore                           |          Keystore
+client application loaded with Server Certificates            |          Server
+--------------------------------------------------------------|------------------------------------
+Message ------> [Public Key] -------> Encrypted Message ------|----->  [Private Key]-->Message
+                     |                                        |             |
+                     |                                        |             |
+                     V                                        |             V
+                 TrustStore                                   |          Keystore
 
 ```
 
-The trick in a `key pair` is to keep one key secret `(the private key)` and to distribute the 
-other key `(the public key)` to everybody. 
+The trick in a `key pair` is to 
+- keep one key secret `(the private key)` and 
+- to distribute the other key `(the public key)` to everybody.
+ 
 Anybody can send an encrypted message to the SERVER, that only SERVER will be able to decrypt.
 
 [1.2. What is TLS and what are Certificates?](http://tldp.org/HOWTO/SSL-Certificates-HOWTO/x64.html)
