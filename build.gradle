@@ -1,0 +1,38 @@
+// Root build.gradle — delegates configuration to subprojects
+// Run server:  ./gradlew runServer
+// Run client:  ./gradlew runClient  (in a separate tab, after server is up)
+
+buildscript {
+    ext.kotlin_version = '2.1.21'
+    repositories { mavenCentral() }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+subprojects {
+    apply plugin: 'application'
+    apply plugin: 'kotlin'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+// ── Convenience tasks at root level ──────────────────────────────────────────
+
+task runServer(type: GradleBuild) {
+    description = 'Start the TLS server (tab 1)'
+    dir = file('server')
+    tasks = ['run']
+}
+
+task runClient(type: GradleBuild) {
+    description = 'Start the TLS client (tab 2, after server is up)'
+    dir = file('client')
+    tasks = ['run']
+}

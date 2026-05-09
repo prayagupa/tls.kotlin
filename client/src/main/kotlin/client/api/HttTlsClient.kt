@@ -37,7 +37,14 @@ class HttpTlsClient(private val host: String, private val port: Int, val keyStor
 class ClientConnectionThread(var tlsV1Socket: SSLSocket, val message: String) : Thread() {
 
     override fun run() {
-        tlsV1Socket.enabledCipherSuites = tlsV1Socket.supportedCipherSuites
+        // Restrict to TLS 1.3 only — disable TLS 1.0/1.1/1.2
+        tlsV1Socket.enabledProtocols = arrayOf("TLSv1.3")
+        // Pin to the three mandatory TLS 1.3 cipher suites (RFC 8446 §B.4)
+        tlsV1Socket.enabledCipherSuites = arrayOf(
+            "TLS_AES_256_GCM_SHA384",
+            "TLS_CHACHA20_POLY1305_SHA256",
+            "TLS_AES_128_GCM_SHA256"
+        )
 
         try {
             // Start handshake

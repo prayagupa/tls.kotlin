@@ -17,7 +17,7 @@ object Server {
         val cert = "conf3/restapi-server.p12"
         val certPassword = "server"
 
-        val server = HttpTlsServer(2810, cert, certPassword, CertTypes.PKCS12.certType, "TLSv1")
+        val server = HttpTlsServer(2810, cert, certPassword, CertTypes.PKCS12.certType, "TLSv1.3")
         server.start()
     }
 

@@ -22,7 +22,16 @@ class HttpTlsServer(private val port: Int, val keyStoreFile: String, private val
             val tlsSecuredServerSocketFactory = tlSecurityContext!!.serverSocketFactory
             val tlSecuredServerSocket = tlsSecuredServerSocketFactory.createServerSocket(this.port) as SSLServerSocket
 
-            println("[INFO] HttpTlsServer TLSv1 server started!!!")
+            // Restrict to TLS 1.3 only — disable TLS 1.0/1.1/1.2
+            tlSecuredServerSocket.enabledProtocols = arrayOf("TLSv1.3")
+            // Pin to the three mandatory TLS 1.3 cipher suites (RFC 8446 §B.4)
+            tlSecuredServerSocket.enabledCipherSuites = arrayOf(
+                "TLS_AES_256_GCM_SHA384",
+                "TLS_CHACHA20_POLY1305_SHA256",
+                "TLS_AES_128_GCM_SHA256"
+            )
+
+            println("[INFO] HttpTlsServer TLSv1.3 server started!!!")
 
             while (!stopListeningOnSecuredSocket.get()) {
                 //handshake per connection
@@ -44,10 +53,6 @@ class HttpTlsServer(private val port: Int, val keyStoreFile: String, private val
 class NonBlockingSecuredConnectionHandler(var securedSocket: SSLSocket) : Thread() {
 
     override fun run() {
-        val supportedCipherSuites = securedSocket.supportedCipherSuites
-
-        securedSocket.enabledCipherSuites = supportedCipherSuites
-
         try {
             // Start handshake
             securedSocket.startHandshake()

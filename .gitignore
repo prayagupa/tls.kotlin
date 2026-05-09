@@ -3,3 +3,7 @@ build/
 */.idea/*
 */out
 */*.iml
+
+# Gradle wrapper caches
+.gradle/
+*/.gradle/

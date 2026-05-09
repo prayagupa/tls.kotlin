@@ -15,7 +15,7 @@ object Client {
         val clientPassword = "server"
 
         val client = HttpTlsClient("127.0.0.1", 2810, clientTrustStoreFile, "pkcs12", clientPassword,
-                "TLSv1")
+                "TLSv1.3")
 
         client.mMessage = "client sends love at ${Date().time}" //TODO bad design
 
