@@ -24,15 +24,15 @@ subprojects {
 }
 
 // ── Convenience tasks at root level ──────────────────────────────────────────
+// Delegates to :server:run and :client:run within the same Gradle process,
+// avoiding the file-lock conflict caused by GradleBuild spawning a child daemon.
 
-task runServer(type: GradleBuild) {
+task runServer {
     description = 'Start the TLS server (tab 1)'
-    dir = file('server')
-    tasks = ['run']
+    dependsOn ':server:run'
 }
 
-task runClient(type: GradleBuild) {
+task runClient {
     description = 'Start the TLS client (tab 2, after server is up)'
-    dir = file('client')
-    tasks = ['run']
+    dependsOn ':client:run'
 }

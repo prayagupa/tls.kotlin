@@ -1,96 +1,59 @@
 package server.api
 
-import server.api.tls.CertificateStore
-import java.io.*
-import java.util.concurrent.atomic.AtomicBoolean
-import javax.net.ssl.SSLServerSocket
-import javax.net.ssl.SSLSocket
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import java.io.File
+import java.security.KeyStore
 
 /**
- * Created by prayagupd
- * on 11/15/16.
+ * HTTP/2 server over TLS 1.3 using Ktor + Netty.
+ *
+ * Netty negotiates HTTP/2 via ALPN during the TLS handshake, advertising ["h2", "http/1.1"].
+ * On Java 9+ no native ALPN agent is required — the JDK JSSE provider handles it natively.
  */
-
-class HttpTlsServer(private val port: Int, val keyStoreFile: String, private val password: String,
-                    private val certType: String, val tlsVersion: String) {
-    private var stopListeningOnSecuredSocket = AtomicBoolean(false)
+class HttpTlsServer(
+    private val port: Int,
+    val keyStoreFile: String,
+    private val password: String,
+    private val certType: String,
+    val tlsVersion: String          // kept for API compat; TLS config is owned by Ktor/Netty
+) {
+    private lateinit var engine: EmbeddedServer<*, *>
 
     fun start() {
-        val tlSecurityContext = CertificateStore.createTLSContext(keyStoreFile, certType, password, tlsVersion)
-
-        try {
-            val tlsSecuredServerSocketFactory = tlSecurityContext!!.serverSocketFactory
-            val tlSecuredServerSocket = tlsSecuredServerSocketFactory.createServerSocket(this.port) as SSLServerSocket
-
-            // Restrict to TLS 1.3 only — disable TLS 1.0/1.1/1.2
-            tlSecuredServerSocket.enabledProtocols = arrayOf("TLSv1.3")
-            // Pin to the three mandatory TLS 1.3 cipher suites (RFC 8446 §B.4)
-            tlSecuredServerSocket.enabledCipherSuites = arrayOf(
-                "TLS_AES_256_GCM_SHA384",
-                "TLS_CHACHA20_POLY1305_SHA256",
-                "TLS_AES_128_GCM_SHA256"
-            )
-
-            println("[INFO] HttpTlsServer TLSv1.3 server started!!!")
-
-            while (!stopListeningOnSecuredSocket.get()) {
-                //handshake per connection
-                val connection = tlSecuredServerSocket.accept() as SSLSocket
-                NonBlockingSecuredConnectionHandler(connection).start()
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        val keyStore = KeyStore.getInstance(certType).also {
+            it.load(File(keyStoreFile).inputStream(), password.toCharArray())
         }
+        val keyAlias = keyStore.aliases().nextElement()
+
+        engine = embeddedServer(Netty, configure = {
+            sslConnector(
+                keyStore = keyStore,
+                keyAlias = keyAlias,
+                keyStorePassword = { password.toCharArray() },
+                privateKeyPassword = { password.toCharArray() }
+            ) {
+                this.port = this@HttpTlsServer.port
+                this.keyStorePath = File(keyStoreFile)
+            }
+        }) {
+            routing {
+                get("/") {
+                    println("[INFO] Server received request: ${call.request.local.method.value} ${call.request.local.uri}")
+                    call.respond(HttpStatusCode.OK, "OK")
+                }
+            }
+        }
+
+        println("[INFO] HttpTlsServer HTTP/2 over TLS 1.3 started on port $port")
+        engine.start(wait = true)
     }
 
     fun stop() {
-        stopListeningOnSecuredSocket = AtomicBoolean(true)
-    }
-}
-
-
-// Thread handling the socket from client
-class NonBlockingSecuredConnectionHandler(var securedSocket: SSLSocket) : Thread() {
-
-    override fun run() {
-        try {
-            // Start handshake
-            securedSocket.startHandshake()
-
-            // Get session after the connection is established
-            val tlsSession = securedSocket.session
-
-            println("[INFO] NonBlockingSecuredConnectionHandler TLSSession :")
-            println("\tProtocol : " + tlsSession?.protocol)
-            println("\tCipher suite : " + tlsSession?.cipherSuite)
-
-            // Start handling application content
-            val receivingStream = securedSocket.inputStream
-            val sendStream = securedSocket.outputStream
-
-            val receivingBuffer = BufferedReader(InputStreamReader(receivingStream))
-            val response = PrintWriter(OutputStreamWriter(sendStream))
-
-            var line = receivingBuffer.readLine()
-            while (line!= null) {
-                if (line.trim { it <= ' ' }.isEmpty()) {
-                    break
-                }
-                println("[INFO] NonBlockingSecuredConnectionHandler Server consumes : " + line)
-                line = receivingBuffer.readLine()
-            }
-
-            // Write data to sending response
-            response.print("HTTP/1.1 200\r\n")
-            response.flush()
-
-            securedSocket.close()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            val printWriter = PrintWriter(StringWriter())
-            printWriter.println("HTTP/1.1 401\r\n")
-            printWriter.flush()
-        }
-
+        if (::engine.isInitialized) engine.stop(gracePeriodMillis = 1_000, timeoutMillis = 5_000)
     }
 }

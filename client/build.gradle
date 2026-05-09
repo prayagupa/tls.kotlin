@@ -21,4 +21,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-mainClassName = "client.api.Client"
+application {
+    mainClass = "client.api.Client"
+}
