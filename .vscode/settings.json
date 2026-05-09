@@ -1,0 +1,24 @@
+{
+    // ── Kotlin ────────────────────────────────────────────────────────────────
+    // Never collapse imports into wildcards (e.g. import io.ktor.http.*)
+    // The Kotlin language server rewrites imports on organise/save using these thresholds.
+    // Setting both to a very high number means wildcards are never generated.
+    "kotlin.completion.snippets.enabled": true,
+    "kotlin.imports.starThreshold": 9999,
+    "kotlin.imports.onDemandThreshold": 9999,
+    // Organise imports (remove unused, expand wildcards) on every save
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+    },
+    // ── Editor ────────────────────────────────────────────────────────────────
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    // ── Files ─────────────────────────────────────────────────────────────────
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.exclude": {
+        "**/.gradle": true,
+        "**/build": true
+    }
+}

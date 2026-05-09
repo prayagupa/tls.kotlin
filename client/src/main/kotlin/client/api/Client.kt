@@ -1,6 +1,6 @@
 package client.api
 
-import java.util.*
+import java.util.Date
 
 /**
  * Created by prayagupd

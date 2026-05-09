@@ -1,11 +1,14 @@
 package server.api
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.engine.EmbeddedServer
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.engine.sslConnector
+import io.ktor.server.netty.Netty
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 import java.io.File
 import java.security.KeyStore
 
